@@ -7,7 +7,9 @@ import java.util.*; 	//for vector
 import java.net.*; 
 import java.math.BigInteger;
 
+import findPrime.findPrime;
 import globalVars.globalVars;
+import modExpPackage.modExp; // my function package
 
 // Server class 
 public class server_Diffie 
@@ -122,22 +124,38 @@ class ClientHandler extends Thread
 					case "prime" :
 						//get prime
 						received = dis.readUTF();
-						tmp = new BigInteger(received);
-						System.out.println("   rec prime: " + tmp);
+						BigInteger prime = new BigInteger(received);
+						//System.out.println("   rec prime: " + prime);
 						
 						received = dis.readUTF();
-						tmp = new BigInteger(received);
-						System.out.println("rec primRoot: " + tmp);
+						BigInteger primitiveRoot = new BigInteger(received);
+						//System.out.println("rec primRoot: " + primitiveRoot);
 						//get primitive root
 						
 						received = dis.readUTF();
-						tmp = new BigInteger(received);
-						System.out.println("xRand: " + tmp);
+						tmp = new BigInteger(received); System.out.println("xRand: " + tmp);
 						
 						received = dis.readUTF();
-						tmp = new BigInteger(received);
-						System.out.println("clientHalf: " + tmp);
-						dos.writeUTF("\nreceived the pair");
+						BigInteger clientRand = new BigInteger(received);// System.out.println("clientHalf: " + clientRand);
+						//dos.writeUTF("\nreceived the pair");
+						
+						BigInteger yRand;
+						findPrime p = new findPrime();
+						//add 2 to xRand so that range max is acceptable. max = p - 2
+						do 
+							yRand = p.getRand();
+						while ((yRand.add(globalVars.TWO)).equals(prime));
+						System.out.println("\nyRand: " + yRand);
+						dos.writeUTF(yRand.toString());
+						
+						modExp expo = new modExp();
+						BigInteger result = expo.modularExp(primitiveRoot, clientRand.multiply(yRand), prime);
+						System.out.println("result: " + result);
+						//System.out.println("x: " + clientRand + "\ny: " + yRand + "\n+= " + clientRand.add(yRand));
+						
+						dos.writeUTF(result.toString());
+						
+						
 						break;
 					
 					case "Key" :

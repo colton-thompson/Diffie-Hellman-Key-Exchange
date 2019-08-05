@@ -58,23 +58,10 @@ public class client_Hellman
 				switch (tosend) {
 					case "Prime":
 					case "prime":
-						/*
-						findPrime p = new findPrime();
-						//get prime
-						BigInteger primeRand = p.getRand();
-						System.out.println("prime: " + primeRand);
-						dos.writeUTF(primeRand.toString());
-						//get factors of p-1
-						primitiveRootFinder primRoot = new primitiveRootFinder();
-						Vector<BigInteger> alpha = new Vector<BigInteger>();
-						alpha = primRoot.primeFactors(primeRand.subtract(ONE), THREE, alpha);
-						System.out.println(alpha); 
-						
-						received = dis.readUTF(); 
-						System.out.println(received);
-						break;*/
 						BigInteger xRand;
-						primitiveRootFinder prf = new primitiveRootFinder(); 
+						primitiveRootFinder prf = new primitiveRootFinder();
+						// index 0: prime
+						// index 1: primitive root 
 						Vector<BigInteger> getNums = prf.mainMethod();
 						//System.out.println("\n       prime: " + getNums.get(0) + "\nprimitveRoot: " + getNums.get(1));
 						dos.writeUTF(getNums.get(0).toString());
@@ -84,17 +71,30 @@ public class client_Hellman
 						//add 2 to xRand so that range max is acceptable. max = p - 2
 						do 
 							xRand = p.getRand();
-						while ((xRand.add(TWO)).equals(getNums.get(0)));
-						System.out.println("\nxRand: " + xRand);
+						while ((xRand.add(globalVars.TWO)).equals(getNums.get(0)));
+						//System.out.println("\nxRand: " + xRand);
 						dos.writeUTF(xRand.toString());
 						
 						modExp expo = new modExp();
-						BigInteger clientHalf = expo.modularExp(getNums.get(1), xRand, getNums.get(0));
-						System.out.println("clientHalf : " + clientHalf);
+						BigInteger clientHalf = expo.modularExp(getNums.get(1), xRand, getNums.get(0)); //System.out.println("clientHalf : " + clientHalf);
 						dos.writeUTF(clientHalf.toString());					
 						
-						received = dis.readUTF(); 
-						System.out.println(received);
+						//received = dis.readUTF(); 
+						//System.out.println(received);
+						
+						//received = dis.readUTF();
+						BigInteger yRand = new BigInteger(dis.readUTF());// System.out.println("yRand: " + yRand);
+						
+						BigInteger result = expo.modularExp(getNums.get(1), yRand.multiply(clientHalf), getNums.get(0)); 
+						//System.out.println("\nresult: " + result);
+						
+						BigInteger servResult = new BigInteger(dis.readUTF()); System.out.println("result: " + servResult);
+						
+						if (servResult.compareTo(result) == 0) 
+							System.out.println("Key generated successfully.");
+						else
+							System.out.println("ERROR: something went wrong with key generation");
+							
 						break;
 					
 					case "Exit":
