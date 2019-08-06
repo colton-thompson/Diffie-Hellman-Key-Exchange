@@ -41,7 +41,9 @@ public class client_Hellman
 			// obtaining input and out streams 
 			DataInputStream dis = new DataInputStream(s.getInputStream()); 
 			DataOutputStream dos = new DataOutputStream(s.getOutputStream()); 
-	
+
+			BigInteger xRand, prime, primitiveRoot, clientHalf, serverHalf, result;
+			Boolean keyCheck = false;
 			// the following loop performs the exchange of 
 			// information between client and client handler 
 			
@@ -58,41 +60,31 @@ public class client_Hellman
 				switch (tosend) {
 					case "Prime":
 					case "prime":
-						BigInteger xRand;
 						primitiveRootFinder prf = new primitiveRootFinder();
 						// index 0: prime
 						// index 1: primitive root 
 						Vector<BigInteger> getNums = prf.mainMethod();
-						//System.out.println("\n       prime: " + getNums.get(0) + "\nprimitveRoot: " + getNums.get(1));
-						dos.writeUTF(getNums.get(0).toString());
-						dos.writeUTF(getNums.get(1).toString());
+						prime = getNums.get(0); primitiveRoot = getNums.get(1);
+						// write the prime and its primitive root over to the server
+						dos.writeUTF(prime.toString());
+						dos.writeUTF(primitiveRoot.toString());
 						
 						findPrime p = new findPrime();
 						//add 2 to xRand so that range max is acceptable. max = p - 2
 						do 
 							xRand = p.getRand();
-						while ((xRand.add(globalVars.TWO)).equals(getNums.get(0)));
+						while ((xRand.add(globalVars.TWO)).equals(prime));
 						
 						modExp expo = new modExp();
-						BigInteger clientHalf = expo.modularExp(getNums.get(1), xRand, getNums.get(0)); //System.out.println("clientHalf : " + clientHalf);
+						clientHalf = expo.modularExp(primitiveRoot, xRand, prime); //System.out.println("clientHalf : " + clientHalf);
 						dos.writeUTF(clientHalf.toString());					
 						
-						//received = dis.readUTF(); 
-						//System.out.println(received);
+						//get computation from the server
+						serverHalf = new BigInteger(dis.readUTF());// System.out.println("serverHalf: " + serverHalf);
 						
-						//received = dis.readUTF();
-						BigInteger yRand = new BigInteger(dis.readUTF());// System.out.println("yRand: " + yRand);
-						
-						BigInteger result = expo.modularExp(getNums.get(1), yRand.multiply(clientHalf), getNums.get(0)); 
-						System.out.println("\nresult: " + result);
-						
-						BigInteger servResult = new BigInteger(dis.readUTF()); System.out.println("result: " + servResult);
-						
-						if (servResult.compareTo(result) == 0) 
-							System.out.println("Key generated successfully.");
-						else
-							System.out.println("ERROR: something went wrong with key generation");
-							
+						result = expo.modularExp(primitiveRoot, serverHalf.multiply(xRand), prime); 
+						//System.out.println("\nresult: " + result);
+						keyCheck = true;
 						break;
 					
 					case "Exit":
@@ -101,6 +93,18 @@ public class client_Hellman
 						s.close(); 
 						System.out.println("Connection closed"); 
 						break; 
+						
+						
+					case "Key":
+					case "key":
+						if (keyCheck) {
+							System.out.println(dis.readUTF()); 
+							break;
+						} else {
+							System.out.println("ERROR " + dis.readUTF() + ": key not generated yet. Please use prime to generate your key.");
+							break;
+						}
+							
 						
 					default:
 						received = dis.readUTF(); 

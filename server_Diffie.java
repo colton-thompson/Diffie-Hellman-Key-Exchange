@@ -77,15 +77,12 @@ class ClientHandler extends Thread
 	{ 
 		String received; 
 		String toreturn; 
-		BigInteger tmp;
+		BigInteger result = globalVars.ONE.negate();
+		BigInteger prime, primitiveRoot, clientHalf, serverHalf;
 		
 		while (true) 
 		{ 
-			try { 
-				// test 
-				//received = dis.readUTF();
-				//System.out.println("test: " + received);
-				
+			try { 				
 				// Ask user what he wants 
 				dos.writeUTF("What do you want? [Date | Time]..\n"+ "Type Exit to terminate connection."); 
 				
@@ -124,14 +121,14 @@ class ClientHandler extends Thread
 					case "prime" :
 						//get prime
 						//received = dis.readUTF();
-						BigInteger prime = new BigInteger(dis.readUTF()); //System.out.println("   rec prime: " + prime);
+						prime = new BigInteger(dis.readUTF()); //System.out.println("   rec prime: " + prime);
 						
 						//received = dis.readUTF();
-						BigInteger primitiveRoot = new BigInteger(dis.readUTF()); //System.out.println("rec primRoot: " + primitiveRoot);
+						primitiveRoot = new BigInteger(dis.readUTF()); //System.out.println("rec primRoot: " + primitiveRoot);
 						//get primitive root
 						
 						received = dis.readUTF();
-						BigInteger clientRand = new BigInteger(received);// System.out.println("clientHalf: " + clientRand);
+						clientHalf = new BigInteger(received);// System.out.println("clientHalf: " + clientRand);
 						//dos.writeUTF("\nreceived the pair");
 						
 						BigInteger yRand;
@@ -140,22 +137,22 @@ class ClientHandler extends Thread
 						do 
 							yRand = p.getRand();
 						while ((yRand.add(globalVars.TWO)).equals(prime));
-						System.out.println("\nyRand: " + yRand);
-						dos.writeUTF(yRand.toString());
-						
+					
+						//compute server side secret						
 						modExp expo = new modExp();
-						BigInteger result = expo.modularExp(primitiveRoot, clientRand.multiply(yRand), prime);
+						serverHalf = expo.modularExp(primitiveRoot, yRand, prime);
+						dos.writeUTF(serverHalf.toString());
+						
+						result = expo.modularExp(primitiveRoot, clientHalf.multiply(yRand), prime);
 						System.out.println("result: " + result);
-						//System.out.println("x: " + clientRand + "\ny: " + yRand + "\n+= " + clientRand.add(yRand));
-						
-						dos.writeUTF(result.toString());
-						
 						
 						break;
 					
+					
 					case "Key" :
 					case "key" :
-						dos.writeUTF(n.toString());
+		
+						dos.writeUTF(result.toString());
 						break;
 						
 					default: 

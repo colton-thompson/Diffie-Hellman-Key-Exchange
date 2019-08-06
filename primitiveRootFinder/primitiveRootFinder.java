@@ -157,6 +157,7 @@ public class primitiveRootFinder {
 			goodFactors = primeFactorTimer();
 			//System.out.println("got goodfactors... " + goodFactors);
 		} while (goodFactors.isEmpty());	
+		System.out.println("\n");
 		
 		// get what n was
 		// this seems like a bad way of doing this, but it's a creative fix
