@@ -72,8 +72,6 @@ public class client_Hellman
 						do 
 							xRand = p.getRand();
 						while ((xRand.add(globalVars.TWO)).equals(getNums.get(0)));
-						//System.out.println("\nxRand: " + xRand);
-						dos.writeUTF(xRand.toString());
 						
 						modExp expo = new modExp();
 						BigInteger clientHalf = expo.modularExp(getNums.get(1), xRand, getNums.get(0)); //System.out.println("clientHalf : " + clientHalf);
@@ -86,7 +84,7 @@ public class client_Hellman
 						BigInteger yRand = new BigInteger(dis.readUTF());// System.out.println("yRand: " + yRand);
 						
 						BigInteger result = expo.modularExp(getNums.get(1), yRand.multiply(clientHalf), getNums.get(0)); 
-						//System.out.println("\nresult: " + result);
+						System.out.println("\nresult: " + result);
 						
 						BigInteger servResult = new BigInteger(dis.readUTF()); System.out.println("result: " + servResult);
 						

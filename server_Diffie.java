@@ -123,17 +123,12 @@ class ClientHandler extends Thread
 					case "Prime" :
 					case "prime" :
 						//get prime
-						received = dis.readUTF();
-						BigInteger prime = new BigInteger(received);
-						//System.out.println("   rec prime: " + prime);
+						//received = dis.readUTF();
+						BigInteger prime = new BigInteger(dis.readUTF()); //System.out.println("   rec prime: " + prime);
 						
-						received = dis.readUTF();
-						BigInteger primitiveRoot = new BigInteger(received);
-						//System.out.println("rec primRoot: " + primitiveRoot);
+						//received = dis.readUTF();
+						BigInteger primitiveRoot = new BigInteger(dis.readUTF()); //System.out.println("rec primRoot: " + primitiveRoot);
 						//get primitive root
-						
-						received = dis.readUTF();
-						tmp = new BigInteger(received); System.out.println("xRand: " + tmp);
 						
 						received = dis.readUTF();
 						BigInteger clientRand = new BigInteger(received);// System.out.println("clientHalf: " + clientRand);
