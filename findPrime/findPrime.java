@@ -102,7 +102,7 @@ public class findPrime
 			BigInteger test1 = randVec.get(1); BigInteger test2 = randVec.get(0); BigInteger test = (test1.subtract(test2));
 			System.out.println("size test: " + test + "\t\tis larger?: " + test.compareTo(TEN.pow(95)));
 			*/
-		return randBigInt; //returns vector with p and q
+		return randBigInt; 
 	} //End getRand()
 	
 	

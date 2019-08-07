@@ -13,12 +13,7 @@ import java.util.concurrent.*;
 
 import modExpPackage.modExp; // my function package
 import findPrime.findPrime;
-import globalVars.globalVars;
-import java.util.*;
-
-//import javax.xml.ws.*;
-
- 
+import globalVars.globalVars; 
 
 public class primitiveRootFinder {	
 	private static BigInteger ZERO = new BigInteger("0"); 
@@ -79,6 +74,7 @@ public class primitiveRootFinder {
 				return true;
 			}
 		}
+		//System.out.println("\n");
 		return false;
 	} //End testPrimitiveRoot()
 	
@@ -157,7 +153,7 @@ public class primitiveRootFinder {
 			goodFactors = primeFactorTimer();
 			//System.out.println("got goodfactors... " + goodFactors);
 		} while (goodFactors.isEmpty());	
-		System.out.println("\n");
+
 		
 		// get what n was
 		// this seems like a bad way of doing this, but it's a creative fix
@@ -183,7 +179,7 @@ public class primitiveRootFinder {
 	public static void main(String[] args) 
 	{
 		Vector<BigInteger> test = mainMethod();
-		//System.out.println("\n       prime: " + test.get(0) + "\nprimitveRoot: " + test.get(1));
+		System.out.println("\n       prime: " + test.get(0) + "\nprimitveRoot: " + test.get(1));
 		System.exit(0);
 	}
 }
